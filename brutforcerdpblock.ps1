@@ -1,10 +1,11 @@
 $ipdic = New-Object System.Collections.Generic.Dictionary[string`,int]
+$analyze_interval = -5 # Analyze interval 
 $rule=Get-NetFirewallRule -DisplayName "Blacklist connections to RDP" # Must be already created and deny all connections
 $filter=$rule | Get-NetFirewallAddressFilter
 $blacklist=$filter.RemoteAddress
-$ipaddrstart="Сетевой адрес источника:"
-$ipaddrend="Порт источника:"
-Get-EventLog Security -InstanceId 4625 -After (Get-Date).AddMinutes(-5) -Before (Get-Date) |
+$ipaddrstart="Сетевой адрес источника:" # Source network address
+$ipaddrend="Порт источника:" # Source port
+Get-EventLog Security -InstanceId 4625 -After (Get-Date).AddMinutes($analyze_interval) -Before (Get-Date) |
 foreach {
 	$indexs=$PSItem.Message.IndexOf($ipaddrstart)
 	$indexe=$PSItem.Message.IndexOf($ipaddrend)
